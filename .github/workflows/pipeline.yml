@@ -38,7 +38,7 @@ jobs:
             chmod +x gradlew        
             ./gradlew publish
         - run: echo "El desarrollador ${{ github.actor }} ha añadido una nueva versión"
-  Mail:
+  Mail: 
     runs-on: ubuntu-latest
     needs: Publish
     steps:
