@@ -48,7 +48,9 @@ class TestPlantillaWord {
 	        assertEquals("Capítulo primero", paragraphs.get(0).getText());	        
 	        assertEquals(wordDocument.convertTextFileToString("subtitulo.txt"), paragraphs.get(1).getText());
 	        assertEquals(wordDocument.convertTextFileToString("parrafo.txt"), paragraphs.get(2).getText());
-	       
+
+			//assertEquals(43,paragraphs.get(1).getRuns().get(0).getFontSizeAsDouble());
+			assertEquals(43,paragraphs.get(1).getRuns().get(0).getText(0).length());
 	    }
 	}
 

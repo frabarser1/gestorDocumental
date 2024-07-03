@@ -1,0 +1,76 @@
+name: Pipeline examen
+on:
+  push:
+  workflow_dispatch: #manualmente????????
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_LOGIN: ${{ github.actor }}
+      GITHUB_PACKAGES: ${{ secrets.TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.TOKEN }}
+    steps:
+      - name: Clonando el repositorio y estableciendo el espacio de trabajo
+        uses: actions/checkout@v3
+      - name: Configurando java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '16'
+      - name: Construyendo y probando el código
+        run: |
+          chmod +x gradlew        
+          ./gradlew jar
+      - run: echo "frabarser1"
+  Test:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Clonando el repositorio y estableciendo el espacio de trabajo
+        uses: actions/checkout@v3
+      - name: Configurando java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '16'
+      - name: Ejecutando los test
+        run: |
+          chmod +x gradlew        
+          ./gradlew test
+      - run: echo "frabarser1"
+  Publish:
+    runs-on: ubuntu-latest
+    needs: Test
+    env:
+      GITHUB_LOGIN: ${{ github.actor }}
+      GITHUB_PACKAGES: ${{ secrets.TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.TOKEN }}
+    steps:
+      - name: Clonando el repositorio y estableciendo el espacio de trabajo
+        uses: actions/checkout@v3
+      - name: Configurando java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '16'
+      - name: Publicando el artefacto
+        run: |
+          chmod +x gradlew        
+          ./gradlew publish
+      - run: echo 'frabarser1'
+
+  Mail:
+    runs-on: ubuntu-latest
+    needs: Publish
+    steps:
+      - name: Enviar correo
+        uses: dawidd6/action-send-mail@v3.12.0
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL }}
+          password: ${{ secrets.PASSWORD }}
+          subject: "Ejecucion correcta."
+          body: "Se ha ejecutado correctamente."
+          to: ${{ secrets.DESTINATARIO }}
+          from: ${{ github.actor }}
